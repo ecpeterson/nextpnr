@@ -449,7 +449,8 @@ def srl_input_checks(sdf):
     checks = {}
     for pin in ("WE", "DI1", "DI2"):
         entries = [e for (kind, _), cell in sdf.cells.items() if kind == "LUT_OR_MEM6SHFREG"
-                   for e in cell.entries if isinstance(e, parse_sdf.SetupHoldCheck) and e.pin == pin and e.clock == "CLK"]
+                   for e in cell.entries if isinstance(e, parse_sdf.SetupHoldCheck)
+                   and e.clock in ("CLK", ["posedge", "CLK"]) and e.pin in (pin, ["posedge", pin], ["negedge", pin])]
         if entries:
             checks[pin] = (envelope([e.setup for e in entries]), envelope([e.hold for e in entries]))
     return checks
